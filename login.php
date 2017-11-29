@@ -1,3 +1,56 @@
+<?php
+
+
+session_start();
+require 'lib/password.php';
+
+
+require 'data/connect.php';
+
+
+if(isset($_POST['login'])){
+
+    $username = !empty($_POST['username']) ? trim($_POST['username']) : null;
+    $passwordAttempt = !empty($_POST['password']) ? trim($_POST['password']) : null;
+
+    $sql = "SELECT id, username, password FROM users WHERE username = :username";
+    $stmt = $pdo->prepare($sql);
+   
+    $stmt->bindValue(':username', $username);
+ 
+    $stmt->execute();
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if($user === false){
+    
+        die('Incorrect username / password combination!');
+    } else{
+      
+        $validPassword = password_verify($passwordAttempt, $user['password']);
+        
+      
+        if($validPassword){
+        
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['logged_in'] = time();
+   
+            header('Location: ../KHS/admin/index.php');
+            exit;
+            
+        } else{
+          
+            die('Incorrect username / password combination!');
+        }
+    }
+    
+}
+ 
+?>
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,19 +83,19 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html"><b>Admin</b>LTE</a>
+    logo
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
     <p class="login-box-msg">Sign in to start your session</p>
 
-    <form action="../../index2.html" method="post">
+    <form action="login.php" method="post">
       <div class="form-group has-feedback">
-        <input type="email" class="form-control" placeholder="Email">
+        <input type="email" class="form-control" placeholder="Email"  id="username" name="username">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="Password">
+        <input type="password" class="form-control" placeholder="Password"  id="password" name="password">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
@@ -55,7 +108,8 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+          <button type="submit"  name="login"  class="btn btn-primary btn-block btn-flat">Sign In</button>
+       
         </div>
         <!-- /.col -->
       </div>
