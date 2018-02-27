@@ -12,11 +12,15 @@ define('MYSQL_HOST', 'localhost');
 define('MYSQL_DATABASE', 'test');
 
 
+
+
+try
+{
+
 $pdoOptions = array(
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_EMULATE_PREPARES => false
 );
-
 
 $pdo = new PDO(
     "mysql:host=" . MYSQL_HOST . ";dbname=" . MYSQL_DATABASE, //DSN
@@ -25,4 +29,9 @@ $pdo = new PDO(
     $pdoOptions //Options
 );
 
+}
+ catch (PDOException $ex)
+ {
+echo "Connection Failed <br/>".$ex->getMessage();
+ }
 ?>

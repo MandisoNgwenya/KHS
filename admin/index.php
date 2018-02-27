@@ -1,4 +1,4 @@
-  <?php
+    <?php
   session_start();
 ob_start();
 include 'ini/header.ini';
